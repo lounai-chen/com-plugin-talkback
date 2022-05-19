@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com-plugin-talkback" version="1.0.0"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>Talkback</name>
+    <js-module name="Talkback" src="www/talkback.js">
+        <clobbers target="Talkback" />
+    </js-module>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="Talkback">
+                <param name="android-package" value="com.plugin.talkback.Talkback" />
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity android:name="com.kylindev.pttlib.view.AlarmAlert" android:launchMode="singleInstance" android:excludeFromRecents="true" android:taskAffinity=""
+				android:theme="@android:style/Theme.Wallpaper.NoTitleBar" android:configChanges="orientation|keyboardHidden|keyboard|navigation" android:screenOrientation="portrait" />
+            <!-- 用于开机自启动 -->
+            <receiver android:name="com.plugin.talkback.BootCompleteReceiver">
+                <intent-filter>
+                    <action android:name="android.intent.action.BOOT_COMPLETED" />
+                </intent-filter>
+            </receiver>
+            <!-- ptt 功能主服务 -->
+            <service android:name="com.kylindev.pttlib.service.InterpttService" android:exported="true"></service>
+            <!-- 监听耳机按键 -->
+            <receiver android:name="com.kylindev.pttlib.utils.MediaButtonIntentReceiver" android:enabled="true"
+				android:priority="1000">
+                <intent-filter>
+                    <action android:name="android.intent.action.MEDIA_BUTTON" />
+                </intent-filter>
+            </receiver>
+            <receiver android:name="com.kylindev.pttlib.utils.AutoRestartServiceReceiver">
+                <intent-filter>
+                    <action android:name="com.kylindev.pttlib.auto_restart_service" />
+                </intent-filter>
+            </receiver>
+        </config-file>
+        <source-file src="src/android/Talkback.java" target-dir="src/com/plugin/talkback/Talkback" />
+        <source-file src="src/android/pttlib-release.aar" target-dir="libs" />
+		<source-file src="src/android/drawable/ic_default_avatar.png" target-dir="res/drawable" />
+		<source-file src="src/android/layout/layout_widget_ptt.xml" target-dir="res/drawable" />
+		<source-file src="src/android/layout/layout_widget_ptt_time.xml" target-dir="res/layout" />
+		<framework src="src/android/pttlib-release.gradle" custom="true" type="gradleReference" />
+    </platform>
+</plugin>
