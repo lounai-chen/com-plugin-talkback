@@ -44,10 +44,15 @@
 		<source-file src="src/android/BuildConfig.java" target-dir="src/com/plugin/talkback/Talkback" />
 		<source-file src="src/android/PttWidgetProvider.java" target-dir="src/com/plugin/talkback/Talkback" />
 		<source-file src="src/android/PttWidgetTimeProvider.java" target-dir="src/com/plugin/talkback/Talkback" />
-        <source-file src="src/android/pttlib-release.aar" target-dir="libs" />
 		<source-file src="src/android/drawable/ic_default_avatar.png" target-dir="res/drawable" />
-		<source-file src="src/android/layout/layout_widget_ptt.xml" target-dir="res/drawable" />
+		<source-file src="src/android/drawable/ic_default_avatar_gray.png" target-dir="res/drawable" />
+		<source-file src="src/android/drawable/ic_play_video.png" target-dir="res/drawable" />
+		<source-file src="src/android/drawable/ic_play_video_gray.png" target-dir="res/drawable" />
+		<source-file src="src/android/drawable/ic_channel_option.png" target-dir="res/drawable" />
+		<source-file src="src/android/drawable/ic_mic_talking.png" target-dir="res/drawable" />
+		<source-file src="src/android/layout/layout_widget_ptt.xml" target-dir="res/layout" />
 		<source-file src="src/android/layout/layout_widget_ptt_time.xml" target-dir="res/layout" />
+		<source-file src="src/android/pttlib-release.aar" target-dir="libs" />
 		<framework src="src/android/pttlib-release.gradle" custom="true" type="gradleReference" />
     </platform>
 </plugin>
