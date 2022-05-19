@@ -18,3 +18,15 @@ exports.quitChannel = function (arg0, success, error) {
 exports.channelList = function (arg0, success, error) {
     exec(success, error, 'Talkback', 'channelList', [arg0]);
 };
+exports.pttKeyDown = function (arg0, success, error) {
+    exec(success, error, 'Talkback', 'pttKeyDown', [arg0]);
+};
+exports.pttKeyUp = function (arg0, success, error) {
+    exec(success, error, 'Talkback', 'pttKeyUp', [arg0]);
+};
+exports.cancelSelect = function (arg0, success, error) {
+    exec(success, error, 'Talkback', 'cancelSelect', [arg0]);
+};
+exports.userList = function (arg0, success, error) {
+    exec(success, error, 'Talkback', 'userList', [arg0]);
+};
