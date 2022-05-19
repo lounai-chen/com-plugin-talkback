@@ -37,6 +37,13 @@
             </receiver>
         </config-file>
         <source-file src="src/android/Talkback.java" target-dir="src/com/plugin/talkback/Talkback" />
+		<source-file src="src/android/App.java" target-dir="src/com/plugin/talkback/Talkback" />
+		<source-file src="src/android/AppCommonUtil.java" target-dir="src/com/plugin/talkback/Talkback" />
+		<source-file src="src/android/AppConstants.java" target-dir="src/com/plugin/talkback/Talkback" />
+		<source-file src="src/android/BootCompleteReceiver.java" target-dir="src/com/plugin/talkback/Talkback" />
+		<source-file src="src/android/BuildConfig.java" target-dir="src/com/plugin/talkback/Talkback" />
+		<source-file src="src/android/PttWidgetProvider.java" target-dir="src/com/plugin/talkback/Talkback" />
+		<source-file src="src/android/PttWidgetTimeProvider.java" target-dir="src/com/plugin/talkback/Talkback" />
         <source-file src="src/android/pttlib-release.aar" target-dir="libs" />
 		<source-file src="src/android/drawable/ic_default_avatar.png" target-dir="res/drawable" />
 		<source-file src="src/android/layout/layout_widget_ptt.xml" target-dir="res/drawable" />
