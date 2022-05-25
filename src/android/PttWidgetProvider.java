@@ -27,27 +27,27 @@ public class PttWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        LogUtils.e("PttWidgetProvider onUpdate", appWidgetIds);
-        for (int appWidgetId : appWidgetIds) {
-            // 获取AppWidget对应的视图
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.layout_widget_ptt);
+        // LogUtils.e("PttWidgetProvider onUpdate", appWidgetIds);
+        // for (int appWidgetId : appWidgetIds) {
+        //     // 获取AppWidget对应的视图
+        //     RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.layout_widget_ptt);
 
-            // 更新用户当前用户
-            User user = com.plugin.talkback.App.getService().getCurrentUser();
-            if (user != null) {
-                remoteViews.setImageViewResource(R.id.iv_icon, R.drawable.ic_default_avatar);
-                remoteViews.setTextViewText(R.id.tv_my_cname, "当前频道:" + user.getChannel().name);
-            } else {
-                remoteViews.setImageViewResource(R.id.iv_icon, R.drawable.ic_default_avatar_gray);
-                remoteViews.setTextViewText(R.id.tv_my_cname, "用户未登录");
-            }
+        //     // 更新用户当前用户
+        //     User user = com.plugin.talkback.App.getService().getCurrentUser();
+        //     if (user != null) {
+        //         remoteViews.setImageViewResource(R.id.iv_icon, R.drawable.ic_default_avatar);
+        //         remoteViews.setTextViewText(R.id.tv_my_cname, "当前频道:" + user.getChannel().name);
+        //     } else {
+        //         remoteViews.setImageViewResource(R.id.iv_icon, R.drawable.ic_default_avatar_gray);
+        //         remoteViews.setTextViewText(R.id.tv_my_cname, "用户未登录");
+        //     }
 
-            setClick(context, remoteViews);
+        //     setClick(context, remoteViews);
 
-            // 调用集合管理器对集合进行更新
-            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
-        }
-        super.onUpdate(context, appWidgetManager, appWidgetIds);
+        //     // 调用集合管理器对集合进行更新
+        //     appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+        // }
+        // super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
     /**

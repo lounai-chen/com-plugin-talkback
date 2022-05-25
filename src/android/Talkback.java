@@ -63,7 +63,7 @@ public class Talkback extends CordovaPlugin {
 
                 mService.registerObserver(serviceObserver);
 
-                com.plugin.talkback.App.autoLogin();
+                autoLogin();
             }
 
             //此方法调用时机：This is called when the connection with the service has been unexpectedly disconnected
@@ -107,7 +107,7 @@ public class Talkback extends CordovaPlugin {
         //那么，如果发现destroy，则应检查是否是用户关闭的。如果不是，则应重新启动activity
         //此时，说明activity不是用户退出的，而是被系统或其他应用杀死的。
         //应通知service，让其稍后重启activity
-
+        LogUtils.e("解绑服务！");
         if (mService != null) {
             mService.unregisterObserver(serviceObserver);
             if (mServiceConnection != null) {
@@ -191,28 +191,110 @@ public class Talkback extends CordovaPlugin {
                     return;
                 }
 
-                if (TextUtils.isEmpty(com.plugin.talkback.App.server)) {
+                if (TextUtils.isEmpty(server)) {
                     ToastUtils.showLong("读取登录信息失败！");
                     return;
                 }
 
-                com.plugin.talkback.App.autoLogin();
+                autoLogin();
             }
         });
     }
 
+    private String ent_id;
+    private int user_id;
+    private String password;
+    private String server;
+
+    /**
+     * 登录
+     */
+    private void autoLogin() {
+        if (mService == null) return;
+
+        // 读取新的配置文件
+//        try {
+//            JSONObject ptt_config = new JSONObject(FileIOUtils.readFile2String(PTT_CONFIG_FILE));
+//            // 转json
+//            ent_id = ptt_config.getString("ent_id");
+//            user_id = ptt_config.getInt("user_id");
+//            password = ptt_config.getString("password");
+//            server = ptt_config.getString("server");
+//            LogUtils.e("配置信息", ent_id, user_id, password, server);
+//        } catch (Exception e) {
+//            LogUtils.e("读取配置信息失败！", e);
+//        }
+
+        if (!TextUtils.isEmpty(server)) {
+            mService.login(
+                    server,
+                    "59638",
+                    "59638",
+                    com.plugin.talkback.AppConstants.ENT_VERSION ? 1 : 0,
+                    ent_id,
+                    String.valueOf(user_id),
+                    password);
+        }
+    }
+
+    /**
+     * 停止服务
+     */
+    private void stopPttService() {
+        if (mServiceBind) {
+            cordova.getContext().unbindService(mServiceConnection);
+            mServiceBind = false;
+        }
+
+        if (mService != null) {
+            mService.unregisterObserver(serviceObserver);
+
+            //首先停止音频，因为当前可能正在讲话
+            mService.userPressUp();
+
+            //先断开连接。此时可能已经处于断开状态了，若已断开，则无需再次调用断开，但需要停止重连
+            InterpttService.ConnState connState = mService.getConnectionState();
+            //加上connecting判断，否则在3g连接、然后连上一个实际不能上网的wifi时，无法退出，因为mService.disconnect超时
+            if (connState == ConnState.CONNECTION_STATE_DISCONNECTED || connState == ConnState.CONNECTION_STATE_CONNECTING) {
+                //若已断开，无需先调用disconnect，再等待disconnected回调，直接退出即可
+
+            } else {
+               /*new Thread(new Runnable() {
+                   @Override
+                   public void run() {
+                       mService.disconnect();
+                   }
+               }).start();*/
+                //如果新线程断开，有时候退出不成功，所以直接disconnect。
+                //但是有新的问题：退出时会toast提示：连接失败，请重试
+                mService.disconnect();
+            }
+
+            //记录用户意图停止
+            mService.appWantQuit();
+        }
+
+        if (com.plugin.talkback.AppCommonUtil.isServiceRunning(cordova.getContext(), INTERPTT_SERVICE)) {
+            cordova.getContext().stopService(mServiceIntent);
+        }
+
+        LogUtils.w("is Ptt service running", com.plugin.talkback.AppCommonUtil.isServiceRunning(cordova.getContext(), INTERPTT_SERVICE));
+    }
+
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        LogUtils.e("调用coolMethod！");
         if (action.equals("coolMethod")) {
             String message = args.getString(0);
             this.coolMethod(message, callbackContext);
             return true;
         }
         else if(action.equals(("login"))){
-            com.plugin.talkback.App.ent_id = args.getString(0);
-            com.plugin.talkback.App.user_id = args.getInt(1);
-            com.plugin.talkback.App.password = args.getString(2);
-            com.plugin.talkback.App.server = args.getString(3);
+            ent_id = args.getString(0);
+            user_id = args.getInt(1);
+            password = args.getString(2);
+            server = args.getString(3);
             if (mService == null) {
                 //如果之前没有启动并bind mService，则需先bind，在onServiceConnected里开始connect
                 if (mServiceConnection == null) {
@@ -221,7 +303,7 @@ public class Talkback extends CordovaPlugin {
 
                 mServiceBind = cordova.getContext().bindService(mServiceIntent, mServiceConnection, 0);
             } else {
-                com.plugin.talkback.App.autoLogin();
+                autoLogin();
             }
             return true;
         }
@@ -259,20 +341,13 @@ public class Talkback extends CordovaPlugin {
         }
         else if(action.equals("pttKeyDown")){
             if (mService != null) {
-                int savedCode = mService.getPttKeycode();
-                if (savedCode!=0) {
-                    //至此，说明需要响应ptt事件
-                    mService.userPressDown();
-                }
+                mService.userPressDown();
             }
             return true;
         }
         else if(action.equals("pttKeyUp")){
             if (mService != null) {
-                int savedCode = mService.getPttKeycode();
-                if (savedCode != 0) {
-                    mService.userPressUp();
-                }
+                mService.userPressUp();
             }
             return true;
         }
@@ -290,6 +365,10 @@ public class Talkback extends CordovaPlugin {
                     callbackContext.success(GsonUtils.toJson(userList));
                 }
             }
+            return true;
+        }
+        else if(action.equals("quitApp")){
+            stopPttService();
             return true;
         }
         return false;

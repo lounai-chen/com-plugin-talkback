@@ -30,3 +30,6 @@ exports.cancelSelect = function (arg0, success, error) {
 exports.userList = function (arg0, success, error) {
     exec(success, error, 'Talkback', 'userList', [arg0]);
 };
+exports.quitApp = function (arg0, success, error) {
+    exec(success, error, 'Talkback', 'quitApp', [arg0]);
+};
