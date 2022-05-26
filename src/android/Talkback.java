@@ -369,6 +369,7 @@ public class Talkback extends CordovaPlugin {
         }
         else if(action.equals("quitApp")){
             stopPttService();
+			AppUtils.exitApp();
             return true;
         }
         return false;
