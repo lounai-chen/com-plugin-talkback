@@ -278,6 +278,9 @@ public class Talkback extends CordovaPlugin {
             cordova.getContext().stopService(mServiceIntent);
         }
 
+        mService = null;
+        mServiceConnection = null;
+
         LogUtils.w("is Ptt service running", com.plugin.talkback.AppCommonUtil.isServiceRunning(cordova.getContext(), INTERPTT_SERVICE));
     }
 
@@ -296,13 +299,18 @@ public class Talkback extends CordovaPlugin {
             password = args.getString(2);
             server = args.getString(3);
             if (mService == null) {
-                //如果之前没有启动并bind mService，则需先bind，在onServiceConnected里开始connect
-                if (mServiceConnection == null) {
-                    initServiceConnection();
+                //可能是首次运行，也可能是用户重新launch
+                //因此，先检查service是否在运行，如果是，则直接bind以获取mService实例；如果没有，则startService，再bind
+                mServiceIntent = new Intent(cordova.getContext(), InterpttService.class);
+
+                if (!com.plugin.talkback.AppCommonUtil.isServiceRunning(cordova.getContext(), INTERPTT_SERVICE)) {
+                    cordova.getContext().startService(mServiceIntent);
                 }
 
+                initServiceConnection();
                 mServiceBind = cordova.getContext().bindService(mServiceIntent, mServiceConnection, 0);
-            } else {
+            }
+            else{
                 autoLogin();
             }
             return true;
