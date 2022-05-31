@@ -348,8 +348,13 @@ public class Talkback extends CordovaPlugin {
             return true;
         }
         else if(action.equals("pttKeyDown")){
-            if (mService != null) {
-                mService.userPressDown();
+            if(!PermissionHelper.hasPermission(this, Manifest.permission.RECORD_AUDIO)) {
+                PermissionHelper.requestPermission(this, 0, Manifest.permission.RECORD_AUDIO);
+            }
+            else{
+                if (mService != null) {
+                    mService.userPressDown();
+                }
             }
             return true;
         }
