@@ -97,6 +97,9 @@ public class Talkback extends CordovaPlugin {
         initServiceConnection();
         mServiceBind = cordova.getContext().bindService(mServiceIntent, mServiceConnection, 0);
 //        requestPrevilege();
+		if(!PermissionHelper.hasPermission(this, Manifest.permission.RECORD_AUDIO)) {
+			PermissionHelper.requestPermission(this, 0, Manifest.permission.RECORD_AUDIO);
+		}
     }
 
     @Override
@@ -348,14 +351,9 @@ public class Talkback extends CordovaPlugin {
             return true;
         }
         else if(action.equals("pttKeyDown")){
-            if(!PermissionHelper.hasPermission(this, Manifest.permission.RECORD_AUDIO)) {
-                PermissionHelper.requestPermission(this, 0, Manifest.permission.RECORD_AUDIO);
-            }
-            else{
-                if (mService != null) {
-                    mService.userPressDown();
-                }
-            }
+			if (mService != null) {
+				mService.userPressDown();
+			}
             return true;
         }
         else if(action.equals("pttKeyUp")){
