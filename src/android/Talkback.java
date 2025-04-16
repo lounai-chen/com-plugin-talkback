@@ -27,7 +27,7 @@ import com.kylindev.pttlib.service.InterpttService.MicState;
 import com.kylindev.pttlib.service.model.Channel;
 import com.kylindev.pttlib.service.model.Contact;
 import com.kylindev.pttlib.service.model.User;
-//import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
